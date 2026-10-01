@@ -80,8 +80,13 @@ export default function PersonalForm() {
           {...register("linkedin")}
         />
         <TextField
+          label="GitHub"
+          placeholder="github.com/yourname"
+          error={errors.github?.message}
+          {...register("github")}
+        />
+        <TextField
           label="Website / Portfolio"
-          className="sm:col-span-2"
           placeholder="yourname.dev"
           error={errors.website?.message}
           {...register("website")}

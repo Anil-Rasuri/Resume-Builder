@@ -66,6 +66,21 @@ export const useResumeStore = create<ResumeState>()(
 
       reset: () => set({ resume: emptyResume, templateId: "classic" }),
     }),
-    { name: "resume-builder-v2" }
+    {
+      name: "resume-builder-v2",
+      // Older saved data may miss newer fields (e.g. github): fill them in.
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<ResumeState> | undefined;
+        return {
+          ...current,
+          ...saved,
+          resume: {
+            ...emptyResume,
+            ...saved?.resume,
+            personal: { ...emptyResume.personal, ...saved?.resume?.personal },
+          },
+        };
+      },
+    }
   )
 );

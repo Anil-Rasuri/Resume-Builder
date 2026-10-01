@@ -8,6 +8,7 @@ export const sampleResume: Resume = {
     phone: "+91 98765 43210",
     location: "Hyderabad, India",
     linkedin: "linkedin.com/in/ananya",
+    github: "github.com/ananya",
     website: "ananya.dev",
     summary:
       "Full stack developer with 3 years of experience building fast, accessible web apps with React and Python.",

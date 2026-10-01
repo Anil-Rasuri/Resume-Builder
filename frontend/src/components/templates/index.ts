@@ -1,29 +1,110 @@
-import type { ComponentType } from "react";
-import ClassicTemplate from "@/components/templates/ClassicTemplate";
-import ModernTemplate from "@/components/templates/ModernTemplate";
-import type { TemplateProps } from "@/components/templates/types";
+import "@/components/templates/resume.css";
+import type { TemplateMeta } from "@/components/templates/types";
 import type { TemplateId } from "@/types/resume";
 
-interface TemplateMeta {
-  id: TemplateId;
-  name: string;
-  description: string;
-  component: ComponentType<TemplateProps>;
-}
-
-export const TEMPLATES: Record<TemplateId, TemplateMeta> = {
-  classic: {
+export const TEMPLATE_LIST: TemplateMeta[] = [
+  {
     id: "classic",
     name: "Classic",
-    description: "Traditional, black and white",
-    component: ClassicTemplate,
+    description: "Traditional, centered. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: " | ",
+    summaryTitle: "Summary",
+    accent: "#111827",
   },
-  modern: {
+  {
     id: "modern",
     name: "Modern",
-    description: "Clean with an indigo accent",
-    component: ModernTemplate,
+    description: "Indigo accent. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: " • ",
+    summaryTitle: "Profile",
+    accent: "#4338ca",
   },
-};
+  {
+    id: "executive",
+    name: "Executive",
+    description: "Serif, navy. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: "  |  ",
+    summaryTitle: "Executive Summary",
+    accent: "#1e3a5f",
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    description: "Light and airy. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: "   ·   ",
+    summaryTitle: "About",
+    accent: "#6b7280",
+  },
+  {
+    id: "elegant",
+    name: "Elegant",
+    description: "Serif, burgundy. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: "  ◆  ",
+    summaryTitle: "Profile",
+    accent: "#7f1d1d",
+  },
+  {
+    id: "bold",
+    name: "Bold",
+    description: "Dark header band. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: "  •  ",
+    summaryTitle: "Profile",
+    accent: "#0f766e",
+  },
+  {
+    id: "timeline",
+    name: "Timeline",
+    description: "Green timeline line. ATS-friendly",
+    layout: "single",
+    headerIn: "top",
+    separator: "  •  ",
+    summaryTitle: "Profile",
+    accent: "#059669",
+  },
+  {
+    id: "sidebar",
+    name: "Sidebar",
+    description: "Two columns, teal",
+    layout: "side-left",
+    headerIn: "top",
+    separator: "",
+    summaryTitle: "Profile",
+    accent: "#0f766e",
+  },
+  {
+    id: "studio",
+    name: "Studio",
+    description: "Two columns, dark sidebar",
+    layout: "side-left",
+    headerIn: "main",
+    separator: "",
+    summaryTitle: "Profile",
+    accent: "#1e293b",
+  },
+  {
+    id: "split",
+    name: "Split",
+    description: "Two columns, right sidebar",
+    layout: "side-right",
+    headerIn: "top",
+    separator: "",
+    summaryTitle: "Profile",
+    accent: "#c2410c",
+  },
+];
 
-export const TEMPLATE_LIST = Object.values(TEMPLATES);
+export const TEMPLATES = Object.fromEntries(
+  TEMPLATE_LIST.map((t) => [t.id, t])
+) as Record<TemplateId, TemplateMeta>;

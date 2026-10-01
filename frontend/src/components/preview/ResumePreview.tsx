@@ -1,9 +1,15 @@
 import { useLayoutEffect, useRef, useState, type RefObject } from "react";
+import ResumeDocument from "@/components/templates/ResumeDocument";
 import { TEMPLATES } from "@/components/templates";
+import { useAutoFit } from "@/hooks/useAutoFit";
 import { useFitScale } from "@/hooks/useFitScale";
+import {
+  A4_WIDTH_PX,
+  CONTENT_HEIGHT_PX,
+  FILL_TARGET,
+  PAGE_MARGIN_MM,
+} from "@/lib/page";
 import type { Resume, TemplateId } from "@/types/resume";
-
-const A4_WIDTH_PX = 794; // 210mm at 96dpi
 
 interface ResumePreviewProps {
   resume: Resume;
@@ -16,13 +22,22 @@ export default function ResumePreview({
   templateId,
   printRef,
 }: ResumePreviewProps) {
-  const Template = TEMPLATES[templateId].component;
+  const template = TEMPLATES[templateId] ?? TEMPLATES.classic;
   const { containerRef, scale } = useFitScale(A4_WIDTH_PX);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Pick the font size and spacing that fill ~94% of the printable area.
+  useAutoFit(contentRef, [resume, templateId], {
+    targetHeightPx: CONTENT_HEIGHT_PX * FILL_TARGET,
+    minFont: 10.5,
+    maxFont: 14.5,
+    maxGap: 2.2,
+  });
 
   const sheetRef = useRef<HTMLDivElement>(null);
   const [sheetHeight, setSheetHeight] = useState(1123);
 
-  // Track the real (unscaled) height so the scaled box takes the right space.
   useLayoutEffect(() => {
     const el = sheetRef.current;
     if (!el) return;
@@ -32,6 +47,8 @@ export default function ResumePreview({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  const spacer = <div style={{ height: `${PAGE_MARGIN_MM}mm` }} />;
 
   return (
     <div ref={containerRef} className="w-full">
@@ -43,10 +60,31 @@ export default function ResumePreview({
             transform: `scale(${scale})`,
             transformOrigin: "top left",
           }}
-          className="min-h-[297mm] bg-white p-[14mm] shadow-lg ring-1 ring-slate-200"
+          className="shadow-lg ring-1 ring-slate-200"
         >
-          <div ref={printRef}>
-            <Template resume={resume} />
+          {/* lang is required for automatic hyphenation in justified text */}
+          <div ref={printRef} lang="en" className="print-sheet">
+            <table className="print-table">
+              <thead>
+                <tr>
+                  <td>{spacer}</td>
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  <td>{spacer}</td>
+                </tr>
+              </tfoot>
+              <tbody>
+                <tr>
+                  <td className="print-cell">
+                    <div ref={contentRef}>
+                      <ResumeDocument resume={resume} template={template} />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

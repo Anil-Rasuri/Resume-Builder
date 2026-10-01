@@ -1,0 +1,459 @@
+/* ================= Base (shared by all templates) ================= */
+.rt {
+  --font: "Segoe UI", Calibri, Arial, Helvetica, sans-serif;
+  --text: #1f2937;
+  --ink: #0f172a;
+  --muted: #475569;
+  --accent: #111827;
+  --head: var(--accent);
+  --rule: transparent;
+  --rule-w: 1px;
+
+  font-family: var(--font);
+  line-height: 1.42;
+  color: var(--text);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rt a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rt-text {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.rt-name {
+  font-size: 2.1em;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--ink);
+}
+.rt-jobtitle {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 0.15em 0 0;
+  color: var(--accent);
+}
+.rt-contact {
+  font-size: 0.9em;
+  margin: 0.45em 0 0;
+  color: var(--muted);
+}
+.rt-sep {
+  white-space: pre;
+}
+
+.rt-section {
+  margin-top: calc(1.15em * var(--gap, 1));
+}
+.rt-heading {
+  font-size: 0.92em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin: 0 0 0.55em;
+  padding-bottom: 0.2em;
+  color: var(--head);
+  border-bottom: var(--rule-w) solid var(--rule);
+  break-after: avoid;
+}
+
+.rt-item {
+  margin-bottom: calc(0.65em * var(--gap, 1));
+  break-inside: avoid;
+}
+.rt-item:last-child {
+  margin-bottom: 0;
+}
+.rt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1em;
+}
+.rt-title {
+  font-weight: 700;
+  color: var(--ink);
+}
+.rt-meta {
+  flex-shrink: 0;
+  font-size: 0.9em;
+  color: var(--muted);
+}
+.rt-sub {
+  margin: 0;
+  color: var(--muted);
+}
+/* space between "Tech stack" line and the project description */
+.rt-sub + .rt-text {
+  margin-top: 0.45em;
+}
+.rt-list {
+  margin: 0.3em 0 0;
+  padding-left: 1.3em;
+  list-style: disc;
+}
+.rt-list li {
+  margin-bottom: 0.15em;
+}
+.rt-skill {
+  margin: 0 0 0.2em;
+}
+.rt-skill b {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ================= Two-column layouts ================= */
+.rt-cols {
+  display: grid;
+  gap: 1.5em;
+  align-items: start;
+}
+.rt-header + .rt-cols {
+  margin-top: 1.1em;
+}
+.rt-left {
+  grid-template-columns: 31% minmax(0, 1fr);
+}
+.rt-right {
+  grid-template-columns: minmax(0, 1fr) 31%;
+}
+.rt-side,
+.rt-main {
+  min-width: 0;
+}
+.rt-side {
+  padding: 1em;
+  border-radius: 0.4em;
+  overflow-wrap: anywhere;
+}
+.rt-side .rt-section {
+  margin-top: calc(1.05em * var(--gap, 1));
+}
+.rt-side > .rt-section:first-child,
+.rt-main > .rt-section:first-child {
+  margin-top: 0;
+}
+.rt-side .rt-heading {
+  font-size: 0.85em;
+  letter-spacing: 0.12em;
+}
+.rt-side .rt-text {
+  text-align: left;
+  hyphens: none;
+}
+.rt-side .rt-row {
+  flex-direction: column;
+  gap: 0;
+}
+.rt-side .rt-meta {
+  margin-top: 0.1em;
+}
+.rt-side .rt-skill b {
+  display: block;
+}
+.rt-side .rt-contact {
+  font-size: 1em;
+  margin: 0;
+}
+.rt-side .rt-ci {
+  display: block;
+  margin-bottom: 0.25em;
+}
+.rt-side .rt-sep {
+  display: none;
+}
+
+/* ================= 1. Classic ================= */
+.rt-classic {
+  --accent: #111827;
+  --rule: #111827;
+}
+.rt-classic .rt-header {
+  text-align: center;
+}
+.rt-classic .rt-name {
+  font-size: 2em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.rt-classic .rt-jobtitle {
+  color: #374151;
+  font-weight: 400;
+}
+.rt-classic .rt-sub {
+  font-style: italic;
+  color: #374151;
+}
+
+/* ================= 2. Modern ================= */
+.rt-modern {
+  --accent: #4338ca;
+  --rule: #e0e7ff;
+  --rule-w: 0.12em;
+  --text: #334155;
+}
+.rt-modern .rt-header {
+  border-bottom: 0.22em solid var(--accent);
+  padding-bottom: 0.7em;
+}
+.rt-modern .rt-name {
+  font-size: 2.3em;
+}
+.rt-modern .rt-meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+.rt-modern .rt-list li::marker {
+  color: #818cf8;
+}
+
+/* ================= 3. Executive ================= */
+.rt-executive {
+  --font: Georgia, "Times New Roman", serif;
+  --accent: #1e3a5f;
+  --rule: #1e3a5f;
+}
+.rt-executive .rt-header {
+  border-bottom: 3px double var(--accent);
+  padding-bottom: 0.6em;
+}
+.rt-executive .rt-name {
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+.rt-executive .rt-jobtitle {
+  font-style: italic;
+  font-weight: 400;
+  color: #475569;
+}
+.rt-executive .rt-heading {
+  font-size: 0.88em;
+  letter-spacing: 0.1em;
+}
+.rt-executive .rt-meta {
+  font-style: italic;
+}
+
+/* ================= 4. Minimal ================= */
+.rt-minimal {
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --accent: #111827;
+  --head: #6b7280;
+  --muted: #6b7280;
+}
+.rt-minimal .rt-name {
+  font-size: 2.5em;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.rt-minimal .rt-jobtitle {
+  font-weight: 400;
+  color: #6b7280;
+}
+.rt-minimal .rt-heading {
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+}
+.rt-minimal .rt-section {
+  margin-top: calc(1.4em * var(--gap, 1));
+}
+
+/* ================= 5. Elegant ================= */
+.rt-elegant {
+  --font: Georgia, "Times New Roman", serif;
+  --accent: #7f1d1d;
+  --rule: #e5c9c9;
+  --text: #292524;
+}
+.rt-elegant .rt-header {
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.7em;
+}
+.rt-elegant .rt-name {
+  font-size: 2.2em;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.rt-elegant .rt-jobtitle {
+  font-style: italic;
+  font-weight: 400;
+  color: #57534e;
+}
+.rt-elegant .rt-heading {
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+.rt-elegant .rt-meta {
+  font-style: italic;
+}
+
+/* ================= 6. Bold ================= */
+.rt-bold {
+  --accent: #0f766e;
+  --head: #0f172a;
+}
+.rt-bold .rt-header {
+  background: #0f172a;
+  padding: 1.1em 1.3em;
+  border-radius: 0.35em;
+}
+.rt-bold .rt-name {
+  color: #ffffff;
+  font-size: 2.2em;
+}
+.rt-bold .rt-jobtitle {
+  color: #5eead4;
+}
+.rt-bold .rt-contact {
+  color: #cbd5e1;
+}
+.rt-bold .rt-heading {
+  border-bottom: 0;
+  border-left: 0.3em solid var(--accent);
+  background: #f0fdfa;
+  padding: 0.15em 0 0.15em 0.6em;
+}
+.rt-bold .rt-meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ================= 7. Timeline ================= */
+.rt-timeline {
+  --accent: #059669;
+  --head: #047857;
+}
+.rt-timeline .rt-header {
+  border-left: 0.35em solid var(--accent);
+  padding-left: 0.8em;
+}
+.rt-timeline .rt-heading {
+  border-bottom: 0;
+}
+.rt-timeline .rt-item {
+  position: relative;
+  padding-left: 1.1em;
+  border-left: 2px solid #a7f3d0;
+}
+.rt-timeline .rt-item::before {
+  content: "";
+  position: absolute;
+  left: -0.45em;
+  top: 0.35em;
+  width: 0.8em;
+  height: 0.8em;
+  box-sizing: border-box;
+  border: 0.15em solid #ffffff;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.rt-timeline .rt-meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ================= 8. Sidebar (left, teal) ================= */
+.rt-sidebar {
+  --accent: #0f766e;
+  --rule: #99f6e4;
+  --text: #334155;
+}
+.rt-sidebar .rt-header {
+  border-bottom: 0.2em solid var(--accent);
+  padding-bottom: 0.6em;
+}
+.rt-sidebar .rt-side {
+  background: #f0fdfa;
+}
+.rt-sidebar .rt-meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ================= 9. Studio (dark sidebar) ================= */
+.rt-studio {
+  --accent: #0d9488;
+  --head: #1e293b;
+  --rule: #cbd5e1;
+  --text: #334155;
+}
+.rt-studio .rt-header {
+  border-left: 0.4em solid var(--accent);
+  padding-left: 0.8em;
+}
+.rt-studio .rt-side {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.rt-studio .rt-side .rt-heading {
+  color: #5eead4;
+  border-bottom-color: rgba(255, 255, 255, 0.25);
+}
+.rt-studio .rt-side .rt-title,
+.rt-studio .rt-side .rt-skill b {
+  color: #ffffff;
+}
+.rt-studio .rt-side .rt-sub,
+.rt-studio .rt-side .rt-meta,
+.rt-studio .rt-side .rt-contact {
+  color: #cbd5e1;
+}
+
+/* ================= 10. Split (right sidebar, orange) ================= */
+.rt-split {
+  --accent: #c2410c;
+  --rule: #fed7aa;
+  --text: #44403c;
+}
+.rt-split .rt-header {
+  border-bottom: 0.2em solid var(--accent);
+  padding-bottom: 0.6em;
+}
+.rt-split .rt-name {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.rt-split .rt-side {
+  background: #fff7ed;
+  border-left: 0.15em solid var(--accent);
+  border-radius: 0;
+}
+.rt-split .rt-meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ================= Page sheet (preview + PDF) ================= */
+.print-sheet {
+  width: 210mm;
+  min-height: 296mm;
+  background: #fff;
+}
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.print-table td {
+  padding: 0;
+}
+/* thead/tfoot repeat on every printed page, giving top and bottom margins */
+.print-cell {
+  padding: 0 12mm !important;
+}

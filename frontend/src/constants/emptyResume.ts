@@ -8,6 +8,7 @@ export const emptyResume: Resume = {
     phone: "",
     location: "",
     linkedin: "",
+    github: "",
     website: "",
     summary: "",
   },

@@ -5,6 +5,7 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   linkedin: string;
+  github: string; 
   website: string;
   summary: string;
 }
@@ -74,4 +75,14 @@ export interface Resume {
   certifications: CertificationItem[];
 }
 
-export type TemplateId = "classic" | "modern";
+export type TemplateId =
+  | "classic"
+  | "modern"
+  | "executive"
+  | "minimal"
+  | "elegant"
+  | "bold"
+  | "timeline"
+  | "sidebar"
+  | "studio"
+  | "split";

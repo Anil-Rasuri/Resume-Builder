@@ -12,6 +12,7 @@ export const personalSchema = z.object({
     }),
   location: z.string().trim().max(80, "Keep the location under 80 characters"),
   linkedin: z.string().trim().max(120, "Link is too long"),
+  github: z.string().trim().max(120, "Link is too long"),
   website: z.string().trim().max(120, "Link is too long"),
   summary: z.string().trim().max(500, "Summary must be 500 characters or less"),
 });

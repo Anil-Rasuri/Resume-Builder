@@ -3,7 +3,7 @@ export const SECTIONS = [
     id: "personal",
     label: "Personal",
     title: "Personal details",
-    description: "Fields marked with * are required.",
+    description: "Contact details, links and your summary. Fields marked with * are required.",
   },
   {
     id: "education",
@@ -12,16 +12,10 @@ export const SECTIONS = [
     description: "Add your degrees, newest first.",
   },
   {
-    id: "experience",
-    label: "Experience",
-    title: "Work experience",
-    description: "Start with your most recent job.",
-  },
-  {
-    id: "internships",
-    label: "Internships",
-    title: "Internships",
-    description: "Add internships and training programs.",
+    id: "skills",
+    label: "Skills",
+    title: "Skills",
+    description: "Organise your skills into three groups.",
   },
   {
     id: "projects",
@@ -30,10 +24,16 @@ export const SECTIONS = [
     description: "Highlight work that shows your skills.",
   },
   {
-    id: "skills",
-    label: "Skills",
-    title: "Skills",
-    description: "Organise your skills into three groups.",
+    id: "experience",
+    label: "Experience",
+    title: "Work experience",
+    description: "Start with your most recent job. Skip this if you are a fresher.",
+  },
+  {
+    id: "internships",
+    label: "Internships",
+    title: "Internships",
+    description: "Add internships and training programs.",
   },
   {
     id: "certifications",
