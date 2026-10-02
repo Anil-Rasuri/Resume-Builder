@@ -1,0 +1,13 @@
+# Python (backend, later)
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets: never commit these
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
