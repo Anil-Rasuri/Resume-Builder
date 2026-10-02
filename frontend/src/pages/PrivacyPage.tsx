@@ -33,8 +33,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-slate-900">Analytics and cookies</h2>
             <p className="mt-2">
-              We do not use advertising cookies. If we add privacy-friendly
-              analytics in the future, this page will be updated.
+                We do not use advertising cookies. We use privacy-friendly analytics
+                (Vercel Web Analytics) to count visits and page views. It does not use
+                cookies and does not track you across other websites. Your resume content
+                is never part of this data.
             </p>
           </section>
           <section>

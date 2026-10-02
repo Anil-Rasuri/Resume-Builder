@@ -7,7 +7,7 @@
 **A free, ATS-friendly resume builder.**
 Fill in your details, pick a template, preview live, and download a clean PDF.
 
-[Live demo](#) · [Report a bug](../../issues)
+[Live demo](https://rezuvo.vercel.app)
 
 </div>
 
