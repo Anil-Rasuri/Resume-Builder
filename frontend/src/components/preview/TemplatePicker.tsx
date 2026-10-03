@@ -28,10 +28,11 @@ function Thumb({ layout, color }: { layout: Layout; color: string }) {
   );
 }
 
+/** Swipe row on phones, grid on larger screens. */
 export default function TemplatePicker({ value, onChange }: TemplatePickerProps) {
   return (
     <div
-      className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 xl:grid-cols-5"
+      className="-mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:py-0 xl:grid-cols-5"
       role="radiogroup"
       aria-label="Choose a template"
     >
@@ -45,7 +46,7 @@ export default function TemplatePicker({ value, onChange }: TemplatePickerProps)
             aria-checked={selected}
             onClick={() => onChange(t.id)}
             title={t.description}
-            className={`rounded-lg border p-2 text-left transition ${
+            className={`w-28 shrink-0 snap-start rounded-lg border p-2 text-left transition sm:w-auto ${
               selected
                 ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
                 : "border-slate-200 bg-white hover:border-slate-300"

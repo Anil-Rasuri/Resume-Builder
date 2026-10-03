@@ -11,19 +11,24 @@ import {
 } from "@/lib/page";
 import type { Resume, TemplateId } from "@/types/resume";
 
+const ZOOM_SCALE = 0.72;
+
 interface ResumePreviewProps {
   resume: Resume;
   templateId: TemplateId;
   printRef: RefObject<HTMLDivElement | null>;
+  zoom?: boolean;
 }
 
 export default function ResumePreview({
   resume,
   templateId,
   printRef,
+  zoom = false,
 }: ResumePreviewProps) {
   const template = TEMPLATES[templateId] ?? TEMPLATES.classic;
-  const { containerRef, scale } = useFitScale(A4_WIDTH_PX);
+  const { containerRef, scale: fitScale } = useFitScale(A4_WIDTH_PX);
+  const scale = zoom ? Math.max(fitScale, ZOOM_SCALE) : fitScale;
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -51,8 +56,11 @@ export default function ResumePreview({
   const spacer = <div style={{ height: `${PAGE_MARGIN_MM}mm` }} />;
 
   return (
-    <div ref={containerRef} className="w-full">
-      <div style={{ height: sheetHeight * scale }}>
+    <div ref={containerRef} className={`w-full min-w-0 ${zoom ? "overflow-x-auto" : ""}`}>
+      <div
+        className={zoom ? "" : "mx-auto"}
+        style={{ height: sheetHeight * scale, width: A4_WIDTH_PX * scale }}
+      >
         <div
           ref={sheetRef}
           style={{

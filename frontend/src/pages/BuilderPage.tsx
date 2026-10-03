@@ -4,6 +4,7 @@ import { useReactToPrint } from "react-to-print";
 import Header from "@/components/layout/Header";
 import MobileTabs, { type MobileView } from "@/components/layout/MobileTabs";
 import SectionTabs from "@/components/layout/SectionTabs";
+import StepNav from "@/components/layout/StepNav";
 import PersonalForm from "@/components/form/PersonalForm";
 import EducationForm from "@/components/form/EducationForm";
 import ExperienceForm from "@/components/form/ExperienceForm";
@@ -32,11 +33,12 @@ const FORMS: Record<SectionId, ComponentType> = {
 };
 
 export default function BuilderPage() {
-  useDocumentTitle("Rezuvo – Create your resume");
+  useDocumentTitle("Rezuvo - Create your resume");
 
   const { resume, templateId, setResume, setTemplate, reset } = useResumeStore();
   const [activeSection, setActiveSection] = useState<SectionId>("personal");
   const [mobileView, setMobileView] = useState<MobileView>("edit");
+  const [zoom, setZoom] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -50,6 +52,16 @@ export default function BuilderPage() {
     documentTitle: `${resume.personal.fullName || "My"} - Resume`,
     pageStyle: PRINT_PAGE_STYLE,
   });
+
+  const changeSection = (id: SectionId) => {
+    setActiveSection(id);
+    if (!isDesktop) window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const changeView = (view: MobileView) => {
+    setMobileView(view);
+    window.scrollTo({ top: 0 });
+  };
 
   const loadSample = () => {
     setResume(sampleResume);
@@ -82,61 +94,100 @@ export default function BuilderPage() {
     print();
   };
 
-  const section = SECTIONS.find((s) => s.id === activeSection) ?? SECTIONS[0];
+  const index = SECTIONS.findIndex((s) => s.id === activeSection);
+  const section = SECTIONS[index] ?? SECTIONS[0];
+  const prev = index > 0 ? SECTIONS[index - 1] : null;
+  const next = index < SECTIONS.length - 1 ? SECTIONS[index + 1] : null;
   const ActiveForm = FORMS[activeSection];
 
   const showForm = isDesktop || mobileView === "edit";
   const showPreview = isDesktop || mobileView === "preview";
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen overflow-x-clip bg-slate-50">
       <Header
         onLoadSample={loadSample}
         onReset={() => setResetOpen(true)}
         onDownload={handleDownload}
       />
 
-      <main className="mx-auto grid max-w-7xl gap-6 px-4 py-6 pb-24 sm:px-6 lg:grid-cols-2 lg:pb-6">
+      {/* grid-cols-1 gives the column a fixed width (minmax(0,1fr)).
+          Without it, the long row of tabs stretched the page past the screen. */}
+      <main className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-3 py-4 pb-28 sm:gap-6 sm:px-6 sm:py-6 lg:grid-cols-2 lg:pb-6">
         {showForm && (
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             {/* Phone-only toolbar (the header hides these buttons on small screens) */}
             <div className="mb-4 flex gap-2 sm:hidden">
               <button
                 onClick={loadSample}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600"
+                className="h-9 rounded-lg border border-slate-200 px-3 text-xs font-medium text-slate-600"
               >
                 Load sample
               </button>
               <button
                 onClick={() => setResetOpen(true)}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600"
+                className="h-9 rounded-lg border border-slate-200 px-3 text-xs font-medium text-slate-600"
               >
                 Reset
               </button>
             </div>
 
-            <SectionTabs active={activeSection} onChange={setActiveSection} />
+            <SectionTabs active={activeSection} onChange={changeSection} />
             <h2 className="mb-1 text-lg font-semibold text-slate-900">{section.title}</h2>
             <p className="mb-5 text-sm text-slate-500">{section.description}</p>
             <ActiveForm key={`${activeSection}-${formKey}`} />
+
+            <StepNav
+              prev={
+                prev
+                  ? { label: prev.label, onClick: () => changeSection(prev.id) }
+                  : undefined
+              }
+              next={
+                next
+                  ? { label: `Next: ${next.label}`, onClick: () => changeSection(next.id) }
+                  : !isDesktop
+                    ? { label: "Preview resume", onClick: () => changeView("preview") }
+                    : undefined
+              }
+            />
           </section>
         )}
 
         {showPreview && (
-          <section className="space-y-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-sm font-semibold text-slate-900">Template</h2>
+          <section className="min-w-0 space-y-3 sm:space-y-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto">
+            <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+              <h2 className="mb-2 text-sm font-semibold text-slate-900 sm:mb-3">Template</h2>
               <TemplatePicker value={templateId} onChange={setTemplate} />
             </div>
 
-            <div className="rounded-xl bg-slate-200/70 p-3 sm:p-4">
-              <ResumePreview resume={resume} templateId={templateId} printRef={printRef} />
+            <div className="min-w-0 rounded-xl bg-slate-200/70 p-2 sm:p-4">
+              {/* Phone-only zoom control */}
+              <div className="mb-2 flex items-center justify-between gap-3 px-1 lg:hidden">
+                <p className="text-xs text-slate-600">
+                  {zoom ? "Swipe sideways to read" : "Tap Zoom to read the text"}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setZoom((z) => !z)}
+                  className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-700"
+                >
+                  {zoom ? "Fit page" : "Zoom"}
+                </button>
+              </div>
+
+              <ResumePreview
+                resume={resume}
+                templateId={templateId}
+                printRef={printRef}
+                zoom={zoom && !isDesktop}
+              />
             </div>
           </section>
         )}
       </main>
 
-      <MobileTabs value={mobileView} onChange={setMobileView} />
+      <MobileTabs value={mobileView} onChange={changeView} />
 
       <ConfirmDialog
         open={resetOpen}

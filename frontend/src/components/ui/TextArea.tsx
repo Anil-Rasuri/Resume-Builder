@@ -11,7 +11,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const inputId = id ?? props.name;
 
     return (
-      <div className={className}>
+      <div className={`min-w-0 ${className}`}>
         <div className="mb-1.5 flex items-center justify-between">
           <label htmlFor={inputId} className="text-sm font-medium text-slate-700">
             {label}
@@ -22,7 +22,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           ref={ref}
           id={inputId}
           aria-invalid={!!error}
-          className={`w-full resize-y rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:ring-2 ${
+          className={`w-full resize-y rounded-lg border bg-white px-3 py-2.5 text-base text-slate-900 placeholder:text-slate-400 outline-none transition focus:ring-2 sm:py-2 sm:text-sm ${
             error
               ? "border-red-400 focus:ring-red-200"
               : "border-slate-300 focus:border-blue-500 focus:ring-blue-100"
