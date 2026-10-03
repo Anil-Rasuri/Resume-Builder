@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigationType, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import SampleBanner from "@/components/builder/SampleBanner";
 import Header from "@/components/layout/Header";
 import MobileTabs, { type MobileView } from "@/components/layout/MobileTabs";
 import SectionTabs from "@/components/layout/SectionTabs";
@@ -16,10 +17,10 @@ import ResumePreview from "@/components/preview/ResumePreview";
 import TemplatePicker from "@/components/preview/TemplatePicker";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { SECTIONS, type SectionId } from "@/constants/sections";
-import { sampleResume } from "@/constants/sampleResume";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { PRINT_PAGE_STYLE } from "@/lib/print";
+import { isResumeEmpty } from "@/lib/resume";
 import { useResumeStore } from "@/store/resumeStore";
 
 const FORMS: Record<SectionId, ComponentType> = {
@@ -35,12 +36,15 @@ const FORMS: Record<SectionId, ComponentType> = {
 export default function BuilderPage() {
   useDocumentTitle("Rezuvo - Create your resume");
 
-  const { resume, templateId, setResume, setTemplate, reset } = useResumeStore();
+  const { resume, templateId, isSample, loadSample, markEdited, setTemplate, reset } =
+    useResumeStore();
   const [activeSection, setActiveSection] = useState<SectionId>("personal");
   const [mobileView, setMobileView] = useState<MobileView>("edit");
   const [zoom, setZoom] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
+  const [sampleOpen, setSampleOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigationType = useNavigationType();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   // Changing this key remounts the form so it re-reads values from the store.
@@ -63,17 +67,43 @@ export default function BuilderPage() {
     window.scrollTo({ top: 0 });
   };
 
-  const loadSample = () => {
-    setResume(sampleResume);
+  const showSample = () => {
+    loadSample();
     setFormKey((k) => k + 1);
+    setSampleOpen(false);
+    // On phones jump to the preview, so the sample resume is seen at once.
+    if (!isDesktop) changeView("preview");
   };
 
-  // "See an example" on the landing page links here with ?sample=1
+  // Every "Load sample" button goes through here.
+  const requestSample = () => {
+    if (!isSample && !isResumeEmpty(resume)) {
+      setSampleOpen(true); // do not overwrite real details without asking
+      return;
+    }
+    showSample();
+  };
+
+  const startFresh = () => {
+    reset();
+    setFormKey((k) => k + 1);
+    setMobileView("edit");
+  };
+
   useEffect(() => {
+    // "See a sample resume" on the landing page links here with ?sample=1
     if (searchParams.get("sample") === "1") {
       loadSample();
+      setFormKey((k) => k + 1);
       setSearchParams({}, { replace: true });
       if (!isDesktop) setMobileView("preview");
+      return;
+    }
+    // Opened from a link inside the site (for example "Build my resume"):
+    // never show leftover sample data, start with an empty form.
+    if (navigationType === "PUSH" && useResumeStore.getState().isSample) {
+      reset();
+      setFormKey((k) => k + 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -102,11 +132,12 @@ export default function BuilderPage() {
 
   const showForm = isDesktop || mobileView === "edit";
   const showPreview = isDesktop || mobileView === "preview";
+  const showBanner = isSample || isResumeEmpty(resume);
 
   return (
     <div className="min-h-screen overflow-x-clip bg-slate-50">
       <Header
-        onLoadSample={loadSample}
+        onLoadSample={requestSample}
         onReset={() => setResetOpen(true)}
         onDownload={handleDownload}
       />
@@ -114,13 +145,23 @@ export default function BuilderPage() {
       {/* grid-cols-1 gives the column a fixed width (minmax(0,1fr)).
           Without it, the long row of tabs stretched the page past the screen. */}
       <main className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-3 py-4 pb-28 sm:gap-6 sm:px-6 sm:py-6 lg:grid-cols-2 lg:pb-6">
+        {showBanner && (
+          <div className="min-w-0 lg:col-span-2">
+            <SampleBanner
+              isSample={isSample}
+              onLoadSample={requestSample}
+              onStartFresh={startFresh}
+            />
+          </div>
+        )}
+
         {showForm && (
           <section className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             {/* Phone-only toolbar (the header hides these buttons on small screens) */}
             <div className="mb-4 flex gap-2 sm:hidden">
               <button
-                onClick={loadSample}
-                className="h-9 rounded-lg border border-slate-200 px-3 text-xs font-medium text-slate-600"
+                onClick={requestSample}
+                className="h-9 rounded-lg border border-blue-200 bg-blue-50 px-3 text-xs font-semibold text-blue-700"
               >
                 Load sample
               </button>
@@ -135,7 +176,16 @@ export default function BuilderPage() {
             <SectionTabs active={activeSection} onChange={changeSection} />
             <h2 className="mb-1 text-lg font-semibold text-slate-900">{section.title}</h2>
             <p className="mb-5 text-sm text-slate-500">{section.description}</p>
-            <ActiveForm key={`${activeSection}-${formKey}`} />
+
+            {/* Real typing or button clicks here mean the sample is now "theirs". */}
+            <div
+              onInput={markEdited}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest("button")) markEdited();
+              }}
+            >
+              <ActiveForm key={`${activeSection}-${formKey}`} />
+            </div>
 
             <StepNav
               prev={
@@ -197,6 +247,16 @@ export default function BuilderPage() {
         cancelLabel="Cancel"
         onConfirm={confirmReset}
         onCancel={() => setResetOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={sampleOpen}
+        title="Replace your details with the sample?"
+        message="The sample will replace what you've entered so far. This can't be undone."
+        confirmLabel="Yes, load sample"
+        cancelLabel="Keep my details"
+        onConfirm={showSample}
+        onCancel={() => setSampleOpen(false)}
       />
     </div>
   );
