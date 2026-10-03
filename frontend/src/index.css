@@ -19,3 +19,20 @@ html {
   .dialog-backdrop,
   .dialog-panel { animation: none; }
 }
+
+
+
+/* ---------- Mobile: scale the whole UI down slightly ---------- */
+@media (max-width: 639px) {
+  /* 93.75% = 15px instead of 16px. Everything sized in rem shrinks with it. */
+  html {
+    font-size: 93.75%;
+  }
+
+  /* Keep form fields at 16px so iPhones don't zoom in when you tap them. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
