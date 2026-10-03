@@ -1,0 +1,14 @@
+{
+  "name": "Rezuvo - Resume Builder",
+  "short_name": "Rezuvo",
+  "description": "Build an ATS-friendly resume and download it as a PDF.",
+  "start_url": "/builder",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    { "src": "/logo-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
