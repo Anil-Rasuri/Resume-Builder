@@ -46,6 +46,7 @@ export interface ProjectItem {
   name: string;
   link: string;
   techStack: string;
+  description?: string;
   bullets: string[];
 }
 
