@@ -141,7 +141,10 @@ export default function ResumeDocument({ resume, template }: TemplateProps) {
               ) : undefined
             }
           >
-            {p.description && <p className="rt-text">{p.description}</p>}
+            {/* a little extra space between the tech stack line and the bullets */}
+            <div style={p.techStack ? { marginTop: "0.2em" } : undefined}>
+              <Bullets items={p.bullets} />
+            </div>
           </Item>
         ))}
       </Section>

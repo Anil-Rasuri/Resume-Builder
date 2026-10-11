@@ -59,7 +59,11 @@ export const sampleResume: Resume = {
       name: "Expense Tracker",
       link: "github.com/ananya/expense-tracker",
       techStack: "React, TypeScript, FastAPI, PostgreSQL",
-      description: "Full stack app to track daily spending with charts and monthly reports.",
+      bullets: [
+        "Built a full stack app to track daily spending across categories.",
+        "Added charts and monthly reports to show where money goes.",
+        "Secured the API with JWT login and input validation.",
+      ],
     },
   ],
   skills: {

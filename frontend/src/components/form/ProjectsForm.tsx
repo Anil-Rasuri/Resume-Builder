@@ -73,11 +73,14 @@ export default function ProjectsForm() {
                 {...register(`items.${index}.link`)}
               />
               <TextArea
-                label="Description"
-                rows={3}
-                placeholder="What it does and what problem it solves."
-                error={rowErrors?.description?.message}
-                {...register(`items.${index}.description`)}
+                label="What you built"
+                rows={4}
+                hint="One bullet per line"
+                placeholder={
+                  "Built a full stack app to track daily spending\nAdded charts and monthly reports"
+                }
+                error={rowErrors?.bulletsText?.message}
+                {...register(`items.${index}.bulletsText`)}
               />
             </div>
           </ItemCard>

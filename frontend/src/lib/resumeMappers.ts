@@ -122,11 +122,15 @@ export const createEmptyProject = (): ProjectRow => ({
   name: "",
   link: "",
   techStack: "",
-  description: "",
+  bulletsText: "",
 });
 
 export const projectsToForm = (items: ProjectItem[]): ProjectsFormValues => ({
-  items: items.map(({ id, ...rest }) => ({ ...rest, uid: id })),
+  items: items.map(({ id, bullets, ...rest }) => ({
+    ...rest,
+    uid: id,
+    bulletsText: bullets.join("\n"),
+  })),
 });
 
 export const projectsFromForm = (rows: ProjectRow[] | undefined): ProjectItem[] =>
@@ -135,7 +139,7 @@ export const projectsFromForm = (rows: ProjectRow[] | undefined): ProjectItem[] 
     name: row.name ?? "",
     link: row.link ?? "",
     techStack: row.techStack ?? "",
-    description: row.description ?? "",
+    bullets: textToBullets(row.bulletsText),
   }));
 
 /* ---------- Certifications ---------- */

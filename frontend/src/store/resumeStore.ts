@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { emptyResume } from "@/constants/emptyResume";
 import { sampleResume } from "@/constants/sampleResume";
+import { newId } from "@/lib/id";
 import type {
   CertificationItem,
   EducationItem,
@@ -32,6 +33,25 @@ interface ResumeState {
   markEdited: () => void;
   reset: () => void;
 }
+
+// Projects saved before this update had a "description" paragraph.
+// Turn it into bullet points so nobody loses their text.
+type SavedProject = Partial<ProjectItem> & { description?: string };
+
+const migrateProject = (p: SavedProject): ProjectItem => ({
+  id: p.id ?? newId(),
+  name: p.name ?? "",
+  link: p.link ?? "",
+  techStack: p.techStack ?? "",
+  bullets:
+    p.bullets ??
+    (p.description
+      ? p.description
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
+      : []),
+});
 
 export const useResumeStore = create<ResumeState>()(
   persist(
@@ -79,13 +99,14 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: "resume-builder-v2",
-      // Older saved data may miss newer fields: fill them in.
+      // Older saved data may miss newer fields or use older shapes: fix them up.
       merge: (persisted, current) => {
         const saved = persisted as Partial<ResumeState> | undefined;
+        const savedProjects = (saved?.resume?.projects ?? []) as SavedProject[];
         return {
           ...current,
           ...saved,
-          // Data saved before this update: recognise a leftover sample.
+          // Data saved before the sample update: recognise a leftover sample.
           isSample:
             saved?.isSample ??
             saved?.resume?.personal?.email === sampleResume.personal.email,
@@ -93,6 +114,7 @@ export const useResumeStore = create<ResumeState>()(
             ...emptyResume,
             ...saved?.resume,
             personal: { ...emptyResume.personal, ...saved?.resume?.personal },
+            projects: savedProjects.map(migrateProject),
           },
         };
       },

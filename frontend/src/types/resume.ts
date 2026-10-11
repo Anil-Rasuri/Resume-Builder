@@ -5,7 +5,7 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   linkedin: string;
-  github: string; 
+  github: string;
   website: string;
   summary: string;
 }
@@ -46,7 +46,7 @@ export interface ProjectItem {
   name: string;
   link: string;
   techStack: string;
-  description: string;
+  bullets: string[];
 }
 
 export interface CertificationItem {
