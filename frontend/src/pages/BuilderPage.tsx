@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ComponentType } from "react";
 import { useNavigationType, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import SampleBanner from "@/components/builder/SampleBanner";
+import SavedDetailsBar from "@/components/builder/SavedDetailsBar";
 import Header from "@/components/layout/Header";
 import MobileTabs, { type MobileView } from "@/components/layout/MobileTabs";
 import SectionTabs from "@/components/layout/SectionTabs";
@@ -21,6 +22,7 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { PRINT_PAGE_STYLE } from "@/lib/print";
 import { isResumeEmpty } from "@/lib/resume";
+import { useProfileStore } from "@/store/profileStore";
 import { useResumeStore } from "@/store/resumeStore";
 
 const FORMS: Record<SectionId, ComponentType> = {
@@ -36,13 +38,24 @@ const FORMS: Record<SectionId, ComponentType> = {
 export default function BuilderPage() {
   useDocumentTitle("Rezuvo - Create your resume");
 
-  const { resume, templateId, isSample, loadSample, markEdited, setTemplate, reset } =
-    useResumeStore();
+  const {
+    resume,
+    templateId,
+    isSample,
+    loadSample,
+    markEdited,
+    setTemplate,
+    applyProfile,
+    reset,
+  } = useResumeStore();
+  const { profile, save: saveProfile, forget: forgetProfile } = useProfileStore();
   const [activeSection, setActiveSection] = useState<SectionId>("personal");
   const [mobileView, setMobileView] = useState<MobileView>("edit");
   const [zoom, setZoom] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [sampleOpen, setSampleOpen] = useState(false);
+  const [fillOpen, setFillOpen] = useState(false);
+  const [forgetOpen, setForgetOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -82,6 +95,22 @@ export default function BuilderPage() {
       return;
     }
     showSample();
+  };
+
+  const fillFromProfile = () => {
+    if (!profile) return;
+    applyProfile(structuredClone(profile.resume), profile.templateId);
+    setFormKey((k) => k + 1);
+    setFillOpen(false);
+  };
+
+  // "My details": ask first when it would overwrite what is on screen.
+  const requestFill = () => {
+    if (!isSample && !isResumeEmpty(resume)) {
+      setFillOpen(true);
+      return;
+    }
+    fillFromProfile();
   };
 
   const startFresh = () => {
@@ -173,6 +202,15 @@ export default function BuilderPage() {
               </button>
             </div>
 
+            <SavedDetailsBar
+              canSave={!isSample && !isResumeEmpty(resume)}
+              highlightFill={!!profile && !isSample && isResumeEmpty(resume)}
+              savedAt={profile?.savedAt ?? null}
+              onSave={() => saveProfile(resume, templateId)}
+              onFill={requestFill}
+              onForget={() => setForgetOpen(true)}
+            />
+
             <SectionTabs active={activeSection} onChange={changeSection} />
             <h2 className="mb-1 text-lg font-semibold text-slate-900">{section.title}</h2>
             <p className="mb-5 text-sm text-slate-500">{section.description}</p>
@@ -257,6 +295,29 @@ export default function BuilderPage() {
         cancelLabel="Keep my details"
         onConfirm={showSample}
         onCancel={() => setSampleOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={fillOpen}
+        title="Replace your details with the saved ones?"
+        message="Your saved details will replace what is in the form now. This can't be undone."
+        confirmLabel="Yes, use saved details"
+        cancelLabel="Keep what I have"
+        onConfirm={fillFromProfile}
+        onCancel={() => setFillOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={forgetOpen}
+        title="Delete your saved details?"
+        message="They will be removed from this device. The form on screen stays as it is."
+        confirmLabel="Yes, delete"
+        cancelLabel="Cancel"
+        onConfirm={() => {
+          forgetProfile();
+          setForgetOpen(false);
+        }}
+        onCancel={() => setForgetOpen(false)}
       />
     </div>
   );

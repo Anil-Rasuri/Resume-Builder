@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { emptyResume } from "@/constants/emptyResume";
 import { sampleResume } from "@/constants/sampleResume";
 import { newId } from "@/lib/id";
@@ -29,6 +29,8 @@ interface ResumeState {
   setCertifications: (items: CertificationItem[]) => void;
   setResume: (resume: Resume) => void;
   setTemplate: (id: TemplateId) => void;
+  /** Fill the form from the details the user saved earlier */
+  applyProfile: (resume: Resume, templateId: TemplateId) => void;
   loadSample: () => void;
   markEdited: () => void;
   reset: () => void;
@@ -90,6 +92,9 @@ export const useResumeStore = create<ResumeState>()(
 
       setTemplate: (templateId) => set({ templateId }),
 
+      applyProfile: (resume, templateId) =>
+        set({ resume, templateId, isSample: false }),
+
       loadSample: () => set({ resume: sampleResume, isSample: true }),
 
       // Called when the user really types or clicks inside a form.
@@ -99,6 +104,10 @@ export const useResumeStore = create<ResumeState>()(
     }),
     {
       name: "resume-builder-v2",
+      // The working draft only lives for this browser tab: a refresh keeps it,
+      // a new visit starts with an empty form. Long-term keeping is the job of
+      // "Save my details" (profileStore).
+      storage: createJSONStorage(() => sessionStorage),
       // Older saved data may miss newer fields or use older shapes: fix them up.
       merge: (persisted, current) => {
         const saved = persisted as Partial<ResumeState> | undefined;
